@@ -14,6 +14,7 @@ import (
 type options struct {
 	searchType string
 	max        int
+	src        string
 }
 
 func main() {
@@ -21,6 +22,7 @@ func main() {
 
 	opt := options{}
 	flag.StringVar(&opt.searchType, "search", "random", "Type of search proxylst: random/list")
+	flag.StringVar(&opt.src, "source", "nova", "Source to read the list: nova,alt")
 	flag.IntVar(&opt.max, "max", 9, "Max of IPs proxies")
 	flag.Parse()
 
@@ -33,7 +35,13 @@ func main() {
 	tpl := []byte(sDec)
 
 	if opt.searchType == "list" {
-		lp := loader.ListCrawlerProxyAlt(opt.max)
+		var lp []string
+		if strings.ToLower(opt.src) == "alt" {
+			lp = loader.ListCrawlerProxyAlt(opt.max)
+		}
+		if strings.ToLower(opt.src) == "nova" {
+			lp = loader.ListCrawlerProxyNova(opt.max)
+		}
 		if len(lp) == 0 {
 			log.Fatalln("no proxy found")
 		}
