@@ -24,7 +24,7 @@ func main() {
 	flag.IntVar(&opt.max, "max", 9, "Max of IPs proxies")
 	flag.Parse()
 
-	bs := "ZHluYW1pY19jaGFpbgpwcm94eV9kbnMgCnRjcF9yZWFkX3RpbWVfb3V0IDE1MDAwCnRjcF9jb25uZWN0X3RpbWVfb3V0IDgwMDAKW1Byb3h5TGlzdF0KI3tQUk9YWTF9CiN7UFJPWFkyfQoje1BST1hZM30KI3tQUk9YWTR9CiN7UFJPWFk1fQoje1BST1hZNn0KI3tQUk9YWTd9CiN7UFJPWFk4fQoje1BST1hZOX0="
+	bs := "ZHluYW1pY19jaGFpbgpwcm94eV9kbnMgCnRjcF9yZWFkX3RpbWVfb3V0IDYwMDAwCnRjcF9jb25uZWN0X3RpbWVfb3V0IDMwMDAwCltQcm94eUxpc3RdCiN7UFJPWFk5fQoje1BST1hZOH0KI3tQUk9YWTd9CiN7UFJPWFk2fQoje1BST1hZNX0KI3tQUk9YWTR9CiN7UFJPWFkzfQoje1BST1hZMn0KI3tQUk9YWTF9"
 
 	sDec, err := base64.StdEncoding.DecodeString(bs)
 	if err != nil {
@@ -33,12 +33,15 @@ func main() {
 	tpl := []byte(sDec)
 
 	if opt.searchType == "list" {
-		lp := loader.ListCrawlerProxy(opt.max)
-		log.Println(lp)
+		lp := loader.ListCrawlerProxyAlt(opt.max)
+		if len(lp) == 0 {
+			log.Fatalln("no proxy found")
+		}
 		for i := 1; i <= opt.max; i++ {
 			lbl := fmt.Sprintf("#{PROXY%d}", i)
-			tpl = bytes.Replace(tpl, []byte(lbl), []byte(formatConfig(lp[0])), -1)
+			tpl = bytes.Replace(tpl, []byte(lbl), []byte(formatConfig(lp[i-1])), -1)
 		}
+
 	} else {
 		p := loader.InitRandomProxy()
 		log.Println(p)
