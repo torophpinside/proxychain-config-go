@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"log"
 )
 
 type encodedTemplate struct {
@@ -22,5 +21,5 @@ func (et *encodedTemplate) GetTemplate() ([]byte, error) {
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("error decoding tpl: %s", err))
 	}
-	tpl := []byte(sDec)
+	return []byte(sDec), nil
 }
