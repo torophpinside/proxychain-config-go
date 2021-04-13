@@ -2,38 +2,41 @@ package parser_parser_type
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
-	"log"
 	"proxychain-config-go/config"
 	helper_formatter "proxychain-config-go/helper/formatter"
-	"proxychain-config-go/loader"
-	"strings"
+	loader_proxy "proxychain-config-go/loader/proxy"
 )
 
 type listInterpreterType struct {
 	opt         config.Options
 	tpl         []byte
 	ipFormatter helper_formatter.FormatterInterface
+	proxyLoader loader_proxy.ProxyLoaderInterface
 }
 
-func NewListInterpreterType(opt config.Options, tpl []byte, f helper_formatter.FormatterInterface) InterpreterTypeInterface {
+func NewListInterpreterType(
+	opt config.Options,
+	tpl []byte,
+	f helper_formatter.FormatterInterface,
+	pl loader_proxy.ProxyLoaderInterface,
+) InterpreterTypeInterface {
 	return &listInterpreterType{
 		opt:         opt,
 		tpl:         tpl,
 		ipFormatter: f,
+		proxyLoader: pl,
 	}
 }
 
 func (l *listInterpreterType) Parse() ([]byte, error) {
-	var lp []string
-	if strings.ToLower(l.opt.Src) == "alt" {
-		lp = loader.ListCrawlerProxyAlt(l.opt.Max)
-	}
-	if strings.ToLower(l.opt.Src) == "nova" {
-		lp = loader.ListCrawlerProxyNova(l.opt.Max)
+	lp, err := l.proxyLoader.Load()
+	if err != nil {
+		return nil, err
 	}
 	if len(lp) == 0 {
-		log.Fatalln("no proxy found")
+		return nil, errors.New("no proxy found")
 	}
 	for i := 1; i <= l.opt.Max; i++ {
 		lbl := fmt.Sprintf("#{PROXY%d}", i)

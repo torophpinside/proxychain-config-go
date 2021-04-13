@@ -5,30 +5,39 @@ import (
 	"fmt"
 	"proxychain-config-go/config"
 	helper_formatter "proxychain-config-go/helper/formatter"
-	"proxychain-config-go/loader"
+	loader_proxy "proxychain-config-go/loader/proxy"
 )
 
 type randomInterpreterType struct {
 	opt         config.Options
 	tpl         []byte
 	ipFormatter helper_formatter.FormatterInterface
+	proxyLoader loader_proxy.ProxyLoaderInterface
 }
 
-func NewRandomInterpreterType(opt config.Options, tpl []byte, f helper_formatter.FormatterInterface) InterpreterTypeInterface {
+func NewRandomInterpreterType(
+	opt config.Options,
+	tpl []byte,
+	f helper_formatter.FormatterInterface,
+	pl loader_proxy.ProxyLoaderInterface,
+) InterpreterTypeInterface {
 	return &randomInterpreterType{
 		opt:         opt,
 		tpl:         tpl,
 		ipFormatter: f,
+		proxyLoader: pl,
 	}
 }
 
 func (r *randomInterpreterType) Parse() ([]byte, error) {
-	for i := 1; i < 7; i++ {
-		p := loader.InitRandomProxy()
+	l, err := r.proxyLoader.Load()
+	if err != nil {
+		return nil, err
+	}
 
+	for i := 1; i < len(l); i++ {
 		lbl := fmt.Sprintf("#{PROXY%d}", i)
-
-		r.ipFormatter.SetData(p)
+		r.ipFormatter.SetData(l[i-1])
 		fd, err := r.ipFormatter.Exec()
 		if err != nil {
 			return nil, err
