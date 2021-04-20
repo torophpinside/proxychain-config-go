@@ -22,7 +22,7 @@ func Factory(
 	if opt.SearchType == "random" {
 		ps := []loader_proxy_proxy_source.ProxySourceInterface{
 			loader_proxy_proxy_source.NewGimmeProxyProxySource(c),
-			//loader_proxy_proxy_source.NewGetProxyListProxySource(c),
+			loader_proxy_proxy_source.NewGetProxyListProxySource(c),
 			loader_proxy_proxy_source.NewPubProxyProxySource(c),
 		}
 		pl := loader_proxy.NewRandomProxyLoader(ps)
