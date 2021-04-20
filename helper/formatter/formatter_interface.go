@@ -1,6 +1,6 @@
 package helper_formatter
 
 type FormatterInterface interface {
-	SetData(d interface{})
-	Exec() (interface{}, error)
+	With(d interface{}) FormatterInterface
+	Format() (interface{}, error)
 }

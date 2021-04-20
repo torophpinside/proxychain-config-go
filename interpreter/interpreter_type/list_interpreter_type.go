@@ -40,8 +40,7 @@ func (l *listInterpreterType) Parse() ([]byte, error) {
 	}
 	for i := 1; i <= l.opt.Max; i++ {
 		lbl := fmt.Sprintf("#{PROXY%d}", i)
-		l.ipFormatter.SetData(lp[i-1])
-		fd, err := l.ipFormatter.Exec()
+		fd, err := l.ipFormatter.With(lp[i-1]).Format()
 		if err != nil {
 			return nil, err
 		}

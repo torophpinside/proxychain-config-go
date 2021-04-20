@@ -13,11 +13,12 @@ func NewIPFormatterHelper() FormatterInterface {
 	return &ipFormatterHelper{}
 }
 
-func (i *ipFormatterHelper) SetData(d interface{}) {
+func (i *ipFormatterHelper) With(d interface{}) FormatterInterface {
 	i.data = d.(string)
+	return i
 }
 
-func (i *ipFormatterHelper) Exec() (interface{}, error) {
+func (i *ipFormatterHelper) Format() (interface{}, error) {
 	spl := strings.Split(i.data, ":")
 	ip := spl[1]
 	ip = ip[2:len(spl[1])]

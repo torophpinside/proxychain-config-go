@@ -41,8 +41,7 @@ func (r *randomInterpreterType) Parse() ([]byte, error) {
 
 	for i := 1; i < len(l); i++ {
 		lbl := fmt.Sprintf("#{PROXY%d}", i)
-		r.ipFormatter.SetData(l[i-1])
-		fd, err := r.ipFormatter.Exec()
+		fd, err := r.ipFormatter.With(l[i-1]).Format()
 		if err != nil {
 			return nil, err
 		}
