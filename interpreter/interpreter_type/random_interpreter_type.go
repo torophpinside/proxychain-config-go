@@ -2,6 +2,7 @@ package parser_parser_type
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"proxychain-config-go/config"
 	helper_formatter "proxychain-config-go/helper/formatter"
@@ -33,6 +34,9 @@ func (r *randomInterpreterType) Parse() ([]byte, error) {
 	l, err := r.proxyLoader.Load()
 	if err != nil {
 		return nil, err
+	}
+	if len(l) == 0 {
+		return nil, errors.New("no proxy found")
 	}
 
 	for i := 1; i < len(l); i++ {

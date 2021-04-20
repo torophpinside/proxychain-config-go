@@ -30,7 +30,7 @@ func main() {
 
 	pTpl, err := p.Parse()
 	if err != nil {
-		log.Fatalln("could not parse template", err)
+		log.Fatalln("could not parse template - ", err)
 	}
 
 	if err := ioutil.WriteFile("/etc/proxychains.conf", pTpl, 0666); err != nil {

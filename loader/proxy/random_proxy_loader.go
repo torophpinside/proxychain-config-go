@@ -1,10 +1,8 @@
 package loader_proxy
 
 import (
-	"net/http"
-	"net/url"
+	"proxychain-config-go/helper"
 	loader_proxy_proxy_source "proxychain-config-go/loader/proxy/proxy_source"
-	"time"
 )
 
 type randomProxyLoader struct {
@@ -19,8 +17,9 @@ func NewRandomProxyLoader(s []loader_proxy_proxy_source.ProxySourceInterface) Pr
 
 func (r *randomProxyLoader) Load() ([]string, error) {
 	var l []string
+	md := len(r.source)
 	for i := 0; i < 50; i++ {
-		s := r.source[i%3]
+		s := r.source[i%md]
 		p, err := s.Get()
 		if err != nil {
 			return nil, err
@@ -29,24 +28,12 @@ func (r *randomProxyLoader) Load() ([]string, error) {
 			continue
 		}
 
-		proxyURL, err := url.Parse(p)
-		if err != nil {
-			return nil, err
-		}
-
-		myClient := &http.Client{
-			Transport: &http.Transport{
-				Proxy: http.ProxyURL(proxyURL),
-			},
-			Timeout: 15 * time.Second,
-		}
-		resp, err := myClient.Get("https://www.google.com/")
-		if err != nil || resp == nil {
-			time.Sleep(5 * time.Second)
-			continue
-		}
-
 		l = append(l, p)
+	}
+
+	l, err := helper.RawProxyChecker(l)
+	if err != nil {
+		return nil, err
 	}
 
 	return l, nil

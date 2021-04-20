@@ -8,18 +8,18 @@ import (
 	"proxychain-config-go/helper"
 )
 
-type altProxyLoader struct {
+type proxyListPlusProxyLoader struct {
 	conn config_connection.ConnectionInterface
 }
 
-func NewAltProxyLoader(c config_connection.ConnectionInterface) ProxyLoaderInterface {
-	return &altProxyLoader{
+func NewProxyListPlusProxyLoader(c config_connection.ConnectionInterface) ProxyLoaderInterface {
+	return &proxyListPlusProxyLoader{
 		conn: c,
 	}
 }
 
-func (apl *altProxyLoader) Load() ([]string, error) {
-	body, err := apl.conn.Get("https://free-proxy-list.net/")
+func (apl *proxyListPlusProxyLoader) Load() ([]string, error) {
+	body, err := apl.conn.Get("https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1")
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func (apl *altProxyLoader) Load() ([]string, error) {
 	}
 
 	var fUrls []string
-	doc.Find("#list .container .table-responsive tbody tr").Each(func(i int, s *goquery.Selection) {
+	doc.Find("body div table:nth-child(2) tr").Each(func(i int, s *goquery.Selection) {
 		ip := s.Find("td:first-child").Text()
 		port := s.Find("td:nth-child(2)").Text()
 		https := s.Find("td:nth-child(7)").Text()

@@ -13,6 +13,9 @@ func Factory(opt config.Options, conn config_connection.ConnectionInterface) Pro
 	if strings.ToLower(opt.Src) == "nova" {
 		return NewNovaProxyLoader(conn)
 	}
+	if strings.ToLower(opt.Src) == "plus" {
+		return NewProxyListPlusProxyLoader(conn)
+	}
 
 	return nil
 }

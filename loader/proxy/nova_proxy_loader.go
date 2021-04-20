@@ -4,13 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"log"
-	"net/http"
-	"net/url"
 	config_connection "proxychain-config-go/config/connection"
+	"proxychain-config-go/helper"
 	"strings"
-	"sync"
-	"time"
 )
 
 type novaProxyLoader struct {
@@ -26,13 +22,13 @@ func NewNovaProxyLoader(c config_connection.ConnectionInterface) ProxyLoaderInte
 func (npl *novaProxyLoader) Load() ([]string, error) {
 	body, err := npl.conn.Get("https://www.proxynova.com/proxy-server-list/")
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	r := bytes.NewReader(body)
 	doc, err := goquery.NewDocumentFromReader(r)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	var fUrls []string
@@ -53,35 +49,10 @@ func (npl *novaProxyLoader) Load() ([]string, error) {
 		fUrls = append(fUrls, p)
 	})
 
-	var urls []string
-	var wg sync.WaitGroup
-	for _, p := range fUrls {
-		wg.Add(1)
-		go func(p string, urls *[]string, wg *sync.WaitGroup) {
-			defer wg.Done()
-			proxyURL, err := url.Parse(p)
-			if err != nil {
-				fmt.Println("")
-				log.Fatalf("Failed to parse proxy URL: %v\n", err)
-			}
-
-			myClient := http.Client{
-				Transport: &http.Transport{
-					Proxy: http.ProxyURL(proxyURL),
-				},
-				Timeout: 20 * time.Second,
-			}
-			resp, err := myClient.Get("https://www.bhphotovideo.com/")
-			if err != nil || resp == nil {
-				fmt.Print(".")
-				return
-			}
-			fmt.Print("|")
-			*urls = append(*urls, p)
-		}(p, &urls, &wg)
+	fUrls, err = helper.RawProxyChecker(fUrls)
+	if err != nil {
+		return nil, err
 	}
-	wg.Wait()
 
-	fmt.Println("")
-	return urls, nil
+	return fUrls, nil
 }
