@@ -2,11 +2,14 @@ package loader_proxy
 
 import (
 	"proxychain-config-go/config"
-	config_connection "proxychain-config-go/config/connection"
+	_configConnection "proxychain-config-go/config/connection"
 	"strings"
 )
 
-func Factory(opt config.Options, conn config_connection.ConnectionInterface) ProxyLoaderInterface {
+func Factory(opt config.Options, conn _configConnection.ConnectionInterface) ProxyLoaderInterface {
+	bc := _configConnection.NewBasicConnection()
+	_ = bc.Connect()
+
 	if strings.ToLower(opt.Src) == "alt" {
 		return NewAltProxyLoader(conn)
 	}
@@ -14,7 +17,10 @@ func Factory(opt config.Options, conn config_connection.ConnectionInterface) Pro
 		return NewNovaProxyLoader(conn)
 	}
 	if strings.ToLower(opt.Src) == "plus" {
-		return NewProxyListPlusProxyLoader(conn)
+		return NewProxyListPlusProxyLoader(bc)
+	}
+	if strings.ToLower(opt.Src) == "free" {
+		return NewFreeProxyListProxyLoader(bc)
 	}
 
 	return nil
