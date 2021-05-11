@@ -22,6 +22,9 @@ func Factory(opt config.Options, conn _configConnection.ConnectionInterface) Pro
 	if strings.ToLower(opt.Src) == "free" {
 		return NewFreeProxyListProxyLoader(bc)
 	}
+	if strings.ToLower(opt.Src) == "spysone" {
+		return NewSpysoneProxyLoader(bc)
+	}
 
 	return nil
 }

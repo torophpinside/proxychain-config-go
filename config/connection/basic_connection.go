@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -22,7 +23,13 @@ func (t *basicConnection) Connect() error {
 }
 
 func (t *basicConnection) Get(u string) ([]byte, error) {
-	resp, err := t.client.Get(u)
+	req, err := http.NewRequest("GET", u, nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0")
+	resp, err := t.client.Do(req)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Failed to issue GET request: %v\n", err))
 	}

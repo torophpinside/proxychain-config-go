@@ -38,7 +38,11 @@ func (l *listInterpreterType) Parse() ([]byte, error) {
 	if len(lp) == 0 {
 		return nil, errors.New("no proxy found")
 	}
-	for i := 1; i <= l.opt.Max; i++ {
+	m := l.opt.Max
+	if m > len(lp) {
+		m = len(lp)
+	}
+	for i := 1; i <= m; i++ {
 		lbl := fmt.Sprintf("#{PROXY%d}", i)
 		fd, err := l.ipFormatter.With(lp[i-1]).Format()
 		if err != nil {
