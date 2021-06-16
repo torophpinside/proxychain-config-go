@@ -25,6 +25,9 @@ func Factory(opt config.Options, conn _configConnection.ConnectionInterface) Pro
 	if strings.ToLower(opt.Src) == "spysone" {
 		return NewSpysoneProxyLoader(bc)
 	}
+	if strings.ToLower(opt.Src) == "all" {
+		return NewAllProxyLoader(bc, conn)
+	}
 
 	return nil
 }
