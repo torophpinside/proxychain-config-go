@@ -25,7 +25,7 @@ func (f *freeProxyListProxyLoader) Load() ([]string, error) {
 	}
 
 	var fUrls []string
-	doc.Find("#proxylisttable tbody tr").Each(func(i int, s *goquery.Selection) {
+	doc.Find(".table.table-striped.table-bordered tbody tr").Each(func(i int, s *goquery.Selection) {
 		ip := s.Find("td:first-child").Text()
 		port := s.Find("td:nth-child(2)").Text()
 

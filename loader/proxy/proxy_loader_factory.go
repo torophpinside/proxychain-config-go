@@ -11,7 +11,7 @@ func Factory(opt config.Options, conn _configConnection.ConnectionInterface) Pro
 	_ = bc.Connect()
 
 	if strings.ToLower(opt.Src) == "alt" {
-		return NewAltProxyLoader(conn)
+		return NewAltProxyLoader(bc)
 	}
 	if strings.ToLower(opt.Src) == "nova" {
 		return NewNovaProxyLoader(conn)

@@ -5,22 +5,22 @@ import (
 	"errors"
 	"fmt"
 	"proxychain-config-go/config"
-	helper_formatter "proxychain-config-go/helper/formatter"
-	loader_proxy "proxychain-config-go/loader/proxy"
+	_helperFormatter "proxychain-config-go/helper/formatter"
+	_loaderProxy "proxychain-config-go/loader/proxy"
 )
 
 type listInterpreterType struct {
 	opt         config.Options
 	tpl         []byte
-	ipFormatter helper_formatter.FormatterInterface
-	proxyLoader loader_proxy.ProxyLoaderInterface
+	ipFormatter _helperFormatter.FormatterInterface
+	proxyLoader _loaderProxy.ProxyLoaderInterface
 }
 
 func NewListInterpreterType(
 	opt config.Options,
 	tpl []byte,
-	f helper_formatter.FormatterInterface,
-	pl loader_proxy.ProxyLoaderInterface,
+	f _helperFormatter.FormatterInterface,
+	pl _loaderProxy.ProxyLoaderInterface,
 ) InterpreterTypeInterface {
 	return &listInterpreterType{
 		opt:         opt,
